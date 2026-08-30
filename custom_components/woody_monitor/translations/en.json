@@ -1,0 +1,24 @@
+{
+  "title": "Woody Monitor",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Woody Monitor",
+        "description": "Enter the local URL of your Woody Monitor installation.",
+        "data": {
+          "url": "Woody Monitor URL"
+        },
+        "data_description": {
+          "url": "Example: http://192.168.50.24:8080"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to Woody Monitor.",
+      "not_woody_monitor": "The address did not respond as Woody Monitor."
+    },
+    "abort": {
+      "already_configured": "This Woody Monitor instance is already configured."
+    }
+  }
+}

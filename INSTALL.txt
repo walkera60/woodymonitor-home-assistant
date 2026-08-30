@@ -1,0 +1,14 @@
+Woody Monitor Home Assistant custom integration
+
+1. Copy custom_components/woody_monitor to:
+   /config/custom_components/woody_monitor
+
+2. Restart Home Assistant.
+
+3. Settings -> Devices & services -> Add integration -> Woody Monitor
+
+4. Enter:
+   http://192.168.50.24:8080
+
+No Home Assistant token is required because Home Assistant connects locally
+to the Woody Monitor REST API.

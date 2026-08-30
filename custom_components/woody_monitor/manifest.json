@@ -1,0 +1,14 @@
+{
+  "domain": "woody_monitor",
+  "name": "Woody Monitor",
+  "version": "1.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/walkera60/woodymonitor",
+  "issue_tracker": "https://github.com/walkera60/woodymonitor/issues",
+  "codeowners": [
+    "@walkera60"
+  ],
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": []
+}
