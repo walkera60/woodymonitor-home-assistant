@@ -1,0 +1,89 @@
+automation:
+  - id: woody_monitor_alarmer
+    alias: Woody Monitor - Alarmer
+    description: "Notifikationer for brænderfejl, lavt pilleniveau og forbindelsesfejl"
+    mode: queued
+
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.woody_monitor_burner_fault
+        to: "on"
+        id: burner_fault
+
+      - trigger: state
+        entity_id: binary_sensor.woody_monitor_burner_fault
+        from: "on"
+        to: "off"
+        id: burner_recovered
+
+      - trigger: state
+        entity_id: binary_sensor.woody_monitor_low_pellet
+        to: "on"
+        id: low_pellet
+
+      - trigger: template
+        value_template: >
+          {{ states('binary_sensor.woody_monitor_connection')
+             in ['off', 'unavailable', 'unknown'] }}
+        for: "00:03:00"
+        id: connection_lost
+
+      - trigger: state
+        entity_id: binary_sensor.woody_monitor_connection
+        to: "on"
+        id: connection_restored
+
+    actions:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: burner_fault
+            sequence:
+              - action: notify.mobile_app_sm_a556b
+                data:
+                  title: "🔥 Woody Monitor - Brænderfejl"
+                  message: >
+                    Brænderen melder fejl.
+                    Mode: {{ state_attr('binary_sensor.woody_monitor_burner_fault', 'mode') }}
+                    Alarm: {{ state_attr('binary_sensor.woody_monitor_burner_fault', 'alarm') }}
+                    Effekt: {{ state_attr('binary_sensor.woody_monitor_burner_fault', 'power') }} %
+                    Kedeletemperatur: {{ state_attr('binary_sensor.woody_monitor_burner_fault', 'boiler_temperature') }} °C
+
+          - conditions:
+              - condition: trigger
+                id: burner_recovered
+            sequence:
+              - action: notify.mobile_app_sm_a556b
+                data:
+                  title: "✅ Woody Monitor"
+                  message: "Brænderfejlen er nulstillet."
+
+          - conditions:
+              - condition: trigger
+                id: low_pellet
+            sequence:
+              - action: notify.mobile_app_sm_a556b
+                data:
+                  title: "⚠️ Woody Monitor - Lavt pilleniveau"
+                  message: >
+                    Pillesiloen er ved at være tom.
+                    Niveau: {{ state_attr('binary_sensor.woody_monitor_low_pellet', 'level_kg') }} kg
+                    Alarmgrænse: {{ state_attr('binary_sensor.woody_monitor_low_pellet', 'threshold_kg') }} kg
+
+          - conditions:
+              - condition: trigger
+                id: connection_lost
+            sequence:
+              - action: notify.mobile_app_sm_a556b
+                data:
+                  title: "⚠️ Woody Monitor offline"
+                  message: "Forbindelsen til Woody Monitor har været væk i mindst 3 minutter."
+
+          - conditions:
+              - condition: trigger
+                id: connection_restored
+            sequence:
+              - action: notify.mobile_app_sm_a556b
+                data:
+                  title: "✅ Woody Monitor online"
+                  message: "Forbindelsen til Woody Monitor er genetableret."
